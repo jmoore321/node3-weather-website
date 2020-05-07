@@ -91,18 +91,6 @@ app.get('/weather', (req, res) => {
 
         })
     })
-
-    // console.log(req.query)
-    // res.send({
-    //     location: 'Philadlephia',
-    //     temperature: 72,
-    //     wind_speed: 5,
-    //     wind_dir: 'SSE',
-    //     region: 'Pennsylvania',
-    //     latitude: -75,
-    //     longitude: 47,
-    //     address: req.query.address
-    // })
 })
 
 app.get('/products', (req, res) => {
@@ -116,10 +104,6 @@ app.get('/products', (req, res) => {
         products: []
     })
 })
-
-// app.com 
-// app.com/help
-// app.com/about
 
 app.get('/help/*', (req,res) => {
     res.render('error', {
