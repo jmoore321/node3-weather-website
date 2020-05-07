@@ -1,4 +1,4 @@
-// console.log('client side js file loaded')
+console.log('client side js file loaded')
 // form for client-side js
 
 const weatherForm = document.querySelector('form')
@@ -13,10 +13,11 @@ weatherForm.addEventListener('submit', (e) => {
 
     const location = search.value
     // console.log(location)
+    const url = 'http://api.weatherstack.com/current?access_key=f38386b2782b4faebabd534883361c0f&query=' + location + '&units=f'
     messageOne.textContent = 'Loading...'
     messageTwo.textContent =''
     
-    fetch('/weather?address=' + location).then((response) => {
+    fetch(url).then((response) => {
         response.json().then((data) => {
             if (!data.error) {
                 return messageTwo.textContent = 'The weather in ' + data.location.name + ', ' + data.location.region +' is ' + data.current.temperature + '°F (feels like ' + data.current.feelslike + '°F)' 
