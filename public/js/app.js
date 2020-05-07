@@ -13,16 +13,17 @@ weatherForm.addEventListener('submit', (e) => {
 
     const location = search.value
     // console.log(location)
-    const url = 'http://api.weatherstack.com/current?access_key=f38386b2782b4faebabd534883361c0f&query=' + location + '&units=f'
     messageOne.textContent = 'Loading...'
     messageTwo.textContent =''
     
-    fetch(url).then((response) => {
+    fetch('/weather?address=' + location).then((response) => {
         response.json().then((data) => {
-            if (!data.error) {
-                return messageTwo.textContent = 'The weather in ' + data.location.name + ', ' + data.location.region +' is ' + data.current.temperature + '°F (feels like ' + data.current.feelslike + '°F)' 
+            if (data.error) {
+                messageOne.textContent = data.error
+            } else {
+                messageOne.textContent = data.location
+                messageTwo.textContent = data.forecast
             }
-            messageOne.textContent = 'An Error was detected. Error # ' + data.error.code + '.' + data.error.info
         })
     })
 })
