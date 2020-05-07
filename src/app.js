@@ -1,16 +1,8 @@
-// core module
 const path = require('path')
+const express = require('express')
+const hbs = require('hbs')
 const geocode = require('./utils/geocode')
 const forecast = require('./utils/forecast')
-// npm modules
-const express = require('express')
-const port = process.env.PORT || 3000
-
-const hbs = require('hbs')
-
-// console.log(__dirname)
-// console.log(__filename)
-// console.log(path.join(__dirname, '../public'))
 
 const app = express()
 
@@ -18,77 +10,59 @@ const app = express()
 const publicDirectoryPath = path.join(__dirname, '../public')
 const viewsPath = path.join(__dirname, '../templates/views')
 const partialsPath = path.join(__dirname, '../templates/partials')
+
 // Setup handlebars engine and views location
-app.set('view engine', 'hbs') // adjusts express web server settings
-app.set('views', viewsPath)  // sets the folder for views
+app.set('view engine', 'hbs')
+app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
 
-//Setup static directory to serve
+// Setup static directory to serve
 app.use(express.static(publicDirectoryPath))
 
 app.get('', (req, res) => {
     res.render('index', {
-        title: 'Weather App',
-        name: 'Bob'
+        title: 'Weather',
+        name: 'Jeff'
     })
 })
 
-app.get('/about', (req,res) => {
+app.get('/about', (req, res) => {
     res.render('about', {
         title: 'About Me',
-        name: 'Jeff Moore'
+        name: 'Jeff'
     })
 })
 
-app.get('/help', (req,res) => {
+app.get('/help', (req, res) => {
     res.render('help', {
-        title: 'Help Section',
-        name: 'Andrew',
-        message: 'This is where you would find technical help.'
+        helpText: 'This is some helpful text.',
+        title: 'Help',
+        name: 'Jeff'
     })
 })
-
-app.get('', (req, res) => {
-    res.send('<h1>Weather</h1>')
-})
-
-// app.get('/help' , (req, res) => {
-//     res.send({
-//         name: 'Andrew',
-//         age: 27
-//     })
-// })
-
-// app.get('/about', (req, res) => {
-//     res.send('<h1>About Us</h1><p>This will have information about the test site</p>')
-// })
 
 app.get('/weather', (req, res) => {
-    // res.send('<h1>Get the Local Weather</h1>')
-
     if (!req.query.address) {
         return res.send({
-            error:'You must provide a search city.'
+            error: 'You must provide an address!'
         })
     }
 
-    geocode( req.query.address, (error, {latitude, longitude, location} = {}) => { // set default of emptyt object to empty
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
         if (error) {
-            return console.log(error)
-        } 
+            return res.send({ error })
+        }
 
         forecast(latitude, longitude, (error, forecastData) => {
             if (error) {
-                return console.log(error)
+                return res.send({ error })
             }
-            
-            res.send({
-                location: location, 
-                data: forecastData,
-                latitude: latitude,
-                longitude: longitude
-            })
 
+            res.send({
+                forecast: forecastData,
+                location,
+                address: req.query.address
+            })
         })
     })
 })
@@ -96,29 +70,32 @@ app.get('/weather', (req, res) => {
 app.get('/products', (req, res) => {
     if (!req.query.search) {
         return res.send({
-            error:'You must provide a search term.'
+            error: 'You must provide a search term'
         })
     }
-    console.log(req.query)
+
+    console.log(req.query.search)
     res.send({
         products: []
     })
 })
 
-app.get('/help/*', (req,res) => {
-    res.render('error', {
-        title: 'Help Not Found',
-        err_msg: 'Help Article Not Found.'
+app.get('/help/*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: 'Jeff',
+        errorMessage: 'Help article not found.'
     })
 })
 
-app.get('*', (req,res) => {
-    res.render('error', {
-        title: '404 Error Page',
-        err_msg: 'Page Not Found.'
+app.get('*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: 'Jeff',
+        errorMessage: 'Page not found.'
     })
 })
 
-app.listen(port, () => {
-    console.log('Server is up on port ' + port)
-}) // port number to respond to requests
+app.listen(3000, () => {
+    console.log('Server is up on port 3000.')
+})
